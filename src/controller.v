@@ -98,9 +98,9 @@ module controller(
         .BranchE(BranchE),
         .ALUSrcE(ALUSrcE),
         .FlagWriteE(FlagWriteE),
+        .NoWriteE(NoWriteE) 1bit
         .CondE(CondE),
         .FlagsE(FlagsE)
-        .NoWriteE(NoWriteE) 1bit
     );
     6 + 2 + 2 +4 +4 + 1 = 19
 */
