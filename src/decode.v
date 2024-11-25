@@ -11,7 +11,8 @@ module decode (
 	ImmSrc,
 	RegSrc,
 	Branch,
-	ALUControl
+	ALUControl,
+	IgRn
 );
 	input wire [1:0] Op;
 	input wire [5:0] Funct;
@@ -27,6 +28,7 @@ module decode (
 	output wire [1:0] RegSrc;
 	output reg [1:0] ALUControl;
 	//Add Branch output
+	output reg IgRn;
 	output wire Branch;
 	reg [9:0] controls;
 	//Refactor Branch to Branch_
@@ -53,11 +55,36 @@ module decode (
 	always @(*)
 		if (ALUOp) begin
 			case (Funct[4:1])
-				4'b0100: ALUControl = 2'b00;
-				4'b0010: ALUControl = 2'b01;
-				4'b0000: ALUControl = 2'b10;
-				4'b1100: ALUControl = 2'b11;
-				default: ALUControl = 2'bxx;
+				4'b0100:
+				begin
+					ALUControl = 2'b00; 
+					IgRn = 0;
+				end 
+				4'b0010:
+				begin
+					ALUControl = 2'b01;
+					IgRn = 0;
+				end 
+				4'b0000: 
+				begin
+					ALUControl = 2'b10;
+					IgRn = 0;
+				end
+				4'b1100: 
+				begin
+					ALUControl = 2'b11;
+					IgRn = 0;
+				end
+				4'b1101:
+				begin
+					ALUControl = 2'b00;
+					IgRn = 1; //si es mov
+				end
+				default: 
+					begin
+					ALUControl = 2'bxx;
+					IgRn = 0;
+					end
 			endcase
 			FlagW[1] = Funct[0];
 			FlagW[0] = Funct[0] & ((ALUControl == 2'b00) | (ALUControl == 2'b01));
@@ -65,6 +92,7 @@ module decode (
 		else begin
 			ALUControl = 2'b00;
 			FlagW = 2'b00;
+			IgRn = 0; //SI NO ES DP
 		end
 	assign PCS = ((Rd == 4'b1111) & RegW) | Branch_;
 	assign Branch = Branch_;

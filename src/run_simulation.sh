@@ -6,7 +6,7 @@ rm -f simulation.out simulation.vcd
 # Compilar los archivos Verilog
 iverilog -o simulation.out \
   top.v \
-  testbench.v \
+  testbench2.v \
   arm.v \
   controller.v \
   datapath.v \
