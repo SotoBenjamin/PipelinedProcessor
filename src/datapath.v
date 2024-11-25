@@ -86,6 +86,8 @@ module datapath (
 	wire [31:0] ReadDataW;
 	wire [31:0] ALUOutW;
 
+
+//fetch stage
 	mux2 #(32) pcmux(
 		.d0(PCPlus4F),
 		.d1(ResultW),
@@ -123,6 +125,7 @@ module datapath (
 	// );
 	//optimización
 	assign PCPlus8 = PCPlus4F;
+	
 	flopenrc #(32) instreg (
 	    .clk(clk),
 	    .reset(reset),
@@ -131,6 +134,8 @@ module datapath (
 	    .d(InstrF),
 	    .q(InstrD)
 	);
+
+//decode stage
 	mux2 #(4) ra1mux(
 		.d0(InstrD[19:16]),
 		.d1(4'b1111),
@@ -154,30 +159,26 @@ module datapath (
 		.rd1(RD1D),
 		.rd2(RD2D)
 	);
-	mux2 #(32) resmux(
-		.d0(ALUOutW),
-		.d1(ReadDataW),
-		.s(MemtoRegW),
-		.y(ResultW)
-	);
+	
 	extend ext(
 		.Instr(InstrD[23:0]),
 		.ImmSrc(ImmSrcD),
 		.ExtImm(ExtImmD)
 	);
+/*
 
-	flopen_de regDE(
+flopen_de regDE(
 		.clk(clk),
 		.reset(reset),
 		.clr(1'b0),
 		.en(1'b1),
-		.RA1D(RA1D),
-		.RA2D(RA2D),
-        .RD1D(RD1D),
-        .RD2D(RD2D),
-        .WA3(InstrD[15:12]),
-        .ExtImmD(ExtImmD),
-        .RD1E(RD1E),
+		.RA1D(RA1D), //4bits
+		.RA2D(RA2D), //4 bits
+        .RD1D(RD1D), //32 bits
+        .RD2D(RD2D), //32 bits
+        .WA3(InstrD[15:12]),//4bits
+        .ExtImmD(ExtImmD), // 32 bits
+        .RD1E(RD1E), 
         .RD2E(RD2E),
         .WA3E(WA3E),
         .ExtImmE(ExtImmE),
@@ -185,6 +186,16 @@ module datapath (
 		.RA2E(RA2E)
 	);
 
+	32*3 + 12 = 108
+*/	
+	flopr #(108) de(
+		.clk(clk),
+		.reset(reset),
+		.d({RA1D,RA2D,RD1D,RD2D,InstrD[15:12],ExtImmD}),
+		.q({RA1E,RA2E,RD1E,RD2E,WA3E,ExtImmE})
+	);
+	
+// execute stage
 	mux3 #(32) srcamux(
 		.d0(RD1E),
 		.d1(ResultW),
@@ -216,27 +227,62 @@ module datapath (
 		ALUResultE,
 		ALUFlags
 	);
+
+/*
 	flopen_em regEM(
 		.clk(clk),
 		.reset(reset),
 		.en(1'b1),
-        .ALUResultE(ALUResultE),
-        .WriteDataE(WriteDataE),
-        .WA3E(WA3E),
-        .ALUOutM(ALUOutM),
-        .WriteDataM(WriteDataM),
-        .WA3M(WA3M)
+        .ALUResultE(ALUResultE), // 32 bits
+        .WriteDataE(WriteDataE), // 32 bits
+        .WA3E(WA3E), //4bits
+        .ALUOutM(ALUOutM), //32 bits
+        .WriteDataM(WriteDataM), //32 bits 
+        .WA3M(WA3M) //4bits
 	);
-	flopen_mw regMW(
+
+	32*2 + 4 = 68
+
+*/
+	flopr #(68) em(
+		.clk(clk),
+		.reset(reset),
+		.d({ALUResultE,WriteDataE,WA3E}),
+		.q({ALUOutM,WriteDataM,WA3M})
+	);
+
+
+/*
+
+
+flopen_mw regMW(
 		.clk(clk),
 		.reset(reset),
 		.en(1'b1),
-        .ReadDataM(ReadDataM),
-        .ALUOutM(ALUOutM),
-        .WA3M(WA3M),
+        .ReadDataM(ReadDataM),//32 bits
+        .ALUOutM(ALUOutM), // 32 bits
+        .WA3M(WA3M), // 4bits
         .ReadDataW(ReadDataW),
         .ALUOutW(ALUOutW),
         .WA3W(WA3W)
+	);
+
+	32*2 + 4 = 68
+*/
+	
+	flopr #(68) mw(
+		.clk(clk),
+		.reset(reset),
+		.d({ReadDataM,ALUOutM,WA3M}),
+		.q({ReadDataW,ALUOutW,WA3W})
+	);
+
+
+	mux2 #(32) resmux(
+		.d0(ALUOutW),
+		.d1(ReadDataW),
+		.s(MemtoRegW),
+		.y(ResultW)
 	);
 
 	assign Match_1E_M = (RA1E == WA3M); 

@@ -72,21 +72,22 @@ module controller(
     );
 
     //fase de execute
-
-    flopencont_de de(
+/*
+  flopencont_de de(
         .clk(clk),
         .reset(reset),
         .clr(FlushE),
-        .PCSrcD(PCSrcD),
-        .RegWriteD(RegWriteD),
-        .MemtoRegD(MemtoRegD),
-        .MemWriteD(MemWriteD),
-        .ALUControlD(ALUControlD),
-        .BranchD(BranchD),
-        .ALUSrcD(ALUSrcD),
-        .FlagWriteD(FlagWriteD),
-        .Cond(Cond),
-        .Flags(Flags),
+        .PCSrcD(PCSrcD),  1bit
+        .RegWriteD(RegWriteD), 1bit
+        .MemtoRegD(MemtoRegD), 1bit
+        .MemWriteD(MemWriteD), 1bit
+        .ALUControlD(ALUControlD), 2bit
+        .BranchD(BranchD), 1bit
+        .ALUSrcD(ALUSrcD), 1bit
+        .FlagWriteD(FlagWriteD), 2bit
+        .Cond(Cond), 4bit
+        .Flags(Flags), 4bit
+
         .en(1'b1),
         .PCSrcE(PCSrcE),
         .RegWriteE(RegWriteE),
@@ -98,6 +99,15 @@ module controller(
         .FlagWriteE(FlagWriteE),
         .CondE(CondE),
         .FlagsE(FlagsE)
+    );
+    6 + 2 + 2 +4 +4 = 18
+*/
+    floprc #(18) de(
+        .clk(clk),
+        .reset(reset),
+        .clr(FlushE),
+        .d({PCSrcD,RegWriteD,MemtoRegD,MemWriteD,ALUControlD,BranchD,ALUSrcD,FlagWriteD,Cond,Flags}),
+        .q({PCSrcE,RegWriteE,MemtoRegE,MemWriteE,ALUControlE,BranchE,ALUSrcE,FlagWriteE,CondE,FlagsE})
     );
 
     //conditional
@@ -118,24 +128,35 @@ module controller(
     assign MemWriteEcond = MemWriteE & CondExE;
     assign BranchTakenE = (BranchE & CondExE) ;
 
+/*
 
-    // memory 
-    flopencont_em em(
+ flopencont_em em(
         .clk(clk),
         .reset(reset),
-        .PCSrcE(PCSrcEcond),
-        .RegWriteE(RegWriteEcond),
-        .MemtoRegE(MemtoRegE),
-        .MemWriteE(MemWriteEcond),
+        .PCSrcE(PCSrcEcond), 1bit
+        .RegWriteE(RegWriteEcond), 1bit
+        .MemtoRegE(MemtoRegE), 1bit
+        .MemWriteE(MemWriteEcond), 1bit
         .en(1'b1),
         .PCSrcM(PCSrcM),
         .RegWriteM(RegWriteM),
         .MemtoRegM(MemtoRegM),
         .MemWriteM(MemWriteM)
     );
+*/
+    // memory 
+   
+    flopr #(4) em(
+        .clk(clk),
+        .reset(reset),
+        .d({PCSrcEcond,RegWriteEcond,MemtoRegE,MemWriteEcond}),
+        .q({PCSrcM,RegWriteM,MemtoRegM,MemWriteM})
+    );
 
 
-    //writeback
+
+/*
+
     flopencont_mw mw(
         .clk(clk),
         .reset(reset),
@@ -146,6 +167,18 @@ module controller(
         .PCSrcW(PCSrcW),
         .RegWriteW(RegWriteW),
         .MemtoRegW(MemtoRegW)
+    );
+
+
+*/
+
+
+    //writeback
+    flopr #(3) mw(
+        .clk(clk),
+        .reset(reset),
+        .d({PCSrcM,RegWriteM,MemtoRegM}),
+        .q({PCSrcW,RegWriteW,MemtoRegW})
     );
 
     

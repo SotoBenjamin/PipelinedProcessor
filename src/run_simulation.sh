@@ -32,7 +32,8 @@ iverilog -o simulation.out \
   flopencont_mw.v \
   hazard.v \
   cond_unit.v \
-  flopenrc.v
+  flopenrc.v \
+  floprc.v
 
 # Verificar si la compilación fue exitosa
 if [ $? -ne 0 ]; then
