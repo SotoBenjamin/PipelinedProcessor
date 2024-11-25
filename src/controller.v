@@ -46,10 +46,10 @@ module controller(
     output wire PCSrcM;
 
 
-    wire  RegWriteD, MemtoRegD, MemWriteD, BranchD, ALUSrcD;
+    wire  RegWriteD, MemtoRegD, MemWriteD, BranchD, ALUSrcD, NoWriteD;
     wire [1:0] ALUControlD, FlagWriteD;
     wire [3:0] Flags, CondE, FlagsE;
-    wire RegWriteE, MemWriteE, BranchE;
+    wire RegWriteE, MemWriteE, BranchE, NoWriteE;
     wire RegWriteEcond, PCSrcEcond , MemWriteEcond;
     wire [1:0] FlagWriteE;
     wire MemtoRegM;
@@ -85,6 +85,7 @@ module controller(
         .BranchD(BranchD), 1bit
         .ALUSrcD(ALUSrcD), 1bit
         .FlagWriteD(FlagWriteD), 2bit
+        .NoWriteD(NoWriteD), 1bit
         .Cond(Cond), 4bit
         .Flags(Flags), 4bit
 
@@ -99,15 +100,16 @@ module controller(
         .FlagWriteE(FlagWriteE),
         .CondE(CondE),
         .FlagsE(FlagsE)
+        .NoWriteE(NoWriteE) 1bit
     );
-    6 + 2 + 2 +4 +4 = 18
+    6 + 2 + 2 +4 +4 + 1 = 19
 */
-    floprc #(18) de(
+    floprc #(19) de(
         .clk(clk),
         .reset(reset),
         .clr(FlushE),
-        .d({PCSrcD,RegWriteD,MemtoRegD,MemWriteD,ALUControlD,BranchD,ALUSrcD,FlagWriteD,Cond,Flags}),
-        .q({PCSrcE,RegWriteE,MemtoRegE,MemWriteE,ALUControlE,BranchE,ALUSrcE,FlagWriteE,CondE,FlagsE})
+        .d({PCSrcD,RegWriteD,MemtoRegD,MemWriteD,ALUControlD,BranchD,ALUSrcD,FlagWriteD,NoWriteD,Cond,Flags}),
+        .q({PCSrcE,RegWriteE,MemtoRegE,MemWriteE,ALUControlE,BranchE,ALUSrcE,FlagWriteE,NoWriteE,CondE,FlagsE})
     );
 
     //conditional
@@ -123,7 +125,7 @@ module controller(
         .CondExE(CondExE)
     );
 
-    assign RegWriteEcond = RegWriteE & CondExE;
+    assign RegWriteEcond = RegWriteE & CondExE & ~NoWriteE;
     assign PCSrcEcond =  (PCSrcE & CondExE);
     assign MemWriteEcond = MemWriteE & CondExE;
     assign BranchTakenE = (BranchE & CondExE) ;
