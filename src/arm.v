@@ -28,7 +28,7 @@ module arm (
 	wire PCSrcW;
 	wire [1:0] RegSrcD;
 	wire [1:0] ImmSrcD;
-	wire [1:0] ALUControlE;
+	wire [2:0] ALUControlE;
 	wire Match_1E_M;
 	wire Match_1E_W;
 	wire Match_2E_M;
