@@ -68,7 +68,8 @@ module controller(
         .ALUSrcD(ALUSrcD),
         .FlagWriteD(FlagWriteD),
         .ImmSrcD(ImmSrcD),
-        .RegSrcD(RegSrcD)
+        .RegSrcD(RegSrcD),
+        .NoWriteD(NoWriteD)
     );
 
     //fase de execute
