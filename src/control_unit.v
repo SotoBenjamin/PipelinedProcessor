@@ -10,6 +10,7 @@ module control_unit (
 	FlagWriteD,
 	ImmSrcD,
 	RegSrcD,
+	NoWriteD
 );
 	input wire [27:12] Instr;
 	output wire PCSrcD;
@@ -22,6 +23,7 @@ module control_unit (
 	output wire [1:0] FlagWriteD;
 	output wire [1:0] ImmSrcD;
 	output wire [1:0] RegSrcD;
+	output wire NoWriteD;
 
 	decode dec(
 		.Op(Instr[27:26]),
@@ -36,7 +38,8 @@ module control_unit (
 		.RegW(RegWriteD),
 		.Branch(BranchD),
 		.ALUControl(ALUControlD),
-		.FlagW(FlagWriteD)
+		.FlagW(FlagWriteD),
+		.NoWrite(NoWriteD)
 	);
 	//Solo se coloca el decode por el Instr
 endmodule
