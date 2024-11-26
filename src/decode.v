@@ -79,7 +79,7 @@ module decode (
 				default: ALUControl = 4'bxxxx;
 			endcase
 			FlagW[1] = Funct[0];
-			FlagW[0] = Funct[0] & ((ALUControl == 4'b0000) | (ALUControl == 4'b0001));
+			FlagW[0] = Funct[0] & ((ALUControl[1:0] == 2'b00) | (ALUControl[1:0] == 2'b01));
 		end
 		else begin
 			ALUControl = 4'b0000;

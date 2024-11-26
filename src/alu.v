@@ -5,6 +5,7 @@ module alu(
     output wire [3:0] ALUFlags
 );
 wire neg,zero,carry,overflow;
+wire [31:0] condinva;
 wire [31:0] condinvb;
 wire [32:0] sum;
 assign condinva = ALUControl[3] ? ~a : a;//For RSB
