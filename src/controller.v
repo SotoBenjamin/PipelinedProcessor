@@ -34,7 +34,7 @@ module controller(
     output wire [1:0] RegSrcD;
     output wire [1:0] ImmSrcD;
     output wire ALUSrcE;
-    output wire [3:0] ALUControlE;
+    output wire [4:0] ALUControlE;
     output wire PCSrcW;
     output wire RegWriteW;
     output wire RegWriteM;
@@ -50,7 +50,7 @@ module controller(
 
     wire  RegWriteD, MemtoRegD, MemWriteD, BranchD, ALUSrcD, NoWriteD, IgRnD;
     wire [1:0] FlagWriteD;
-    wire [3:0] ALUControlD;
+    wire [4:0] ALUControlD;
     wire [3:0] Flags, CondE, FlagsE;
     wire RegWriteE, MemWriteE, BranchE, NoWriteE;
     wire RegWriteEcond, PCSrcEcond , MemWriteEcond;
@@ -86,7 +86,7 @@ module controller(
         .RegWriteD(RegWriteD), 1bit
         .MemtoRegD(MemtoRegD), 1bit
         .MemWriteD(MemWriteD), 1bit
-        .ALUControlD(ALUControlD), 4bit
+        .ALUControlD(ALUControlD), 5bit
         .BranchD(BranchD), 1bit
         .ALUSrcD(ALUSrcD), 1bit
         .FlagWriteD(FlagWriteD), 2bit
@@ -110,7 +110,7 @@ module controller(
     );
    
 */
-    floprc #(22) de(
+    floprc #(23) de(
         .clk(clk),
         .reset(reset),
         .clr(FlushE),
