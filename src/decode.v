@@ -27,7 +27,7 @@ module decode (
 	output wire ALUSrc;
 	output wire [1:0] ImmSrc;
 	output wire [1:0] RegSrc;
-	output reg [2:0] ALUControl;
+	output reg [4:0] ALUControl;
 	//Add Branch output
 	output wire Branch;
 	//Add NoWrite for register
@@ -55,30 +55,38 @@ module decode (
 		endcase
 	assign {RegSrc, ImmSrc, ALUSrc, MemtoReg, RegW, MemW, Branch_, ALUOp} = controls;
 
+	//ALUControl[2] => EOR
+	//ALUControl[3] => RSB
+	//ALUControl[4] => BIC
+	
 	always @(*)
 		if (ALUOp) begin
 			case (Funct[4:1])
-				4'b0000: ALUControl = 3'b010;//AND
-				4'b0001: ALUControl = 3'b110;//EOR
-				4'b0010: ALUControl = 3'b001;//SUB
-				4'b0100: ALUControl = 3'b000;//ADD
+				4'b0000: ALUControl = 5'b00010;//AND
+				4'b0001: ALUControl = 5'b00110;//EOR
+				4'b0010: ALUControl = 5'b00001;//SUB
+				4'b0011: ALUControl = 5'b01001;//RSB
 				
-				4'b1000: ALUControl = 3'b010;//TST
-				4'b1001: ALUControl = 3'b110;//TEQ
-				4'b1010: ALUControl = 3'b001;//CMP
-				4'b1011: ALUControl = 3'b000;//CMN
+				4'b0100: ALUControl = 5'b00000;//ADD
 				
-				4'b1100: ALUControl = 3'b011;//ORR
-
-				4'b1101 : ALUControl = 3'b000; //ADD;
+				4'b1000: ALUControl = 5'b00010;//TST
+				4'b1001: ALUControl = 5'b00110;//TEQ
+				4'b1010: ALUControl = 5'b00001;//CMP
+				4'b1011: ALUControl = 5'b00000;//CMN
 				
-				default: ALUControl = 3'bxxx;
+				4'b1100: ALUControl = 5'b00011;//ORR
+				
+				4'b1110: ALUControl = 5'b10011;//BIC
+				
+				4'b1101 : ALUControl = 5'b00000; //ADD;
+				
+				default: ALUControl = 5'bxxxxx;
 			endcase
 			FlagW[1] = Funct[0];
-			FlagW[0] = Funct[0] & ((ALUControl == 3'b000) | (ALUControl == 3'b001));
+			FlagW[0] = Funct[0] & ((ALUControl[1:0] == 2'b00) | (ALUControl[1:0] == 2'b01));
 		end
 		else begin
-			ALUControl = 2'b00;
+			ALUControl = 5'b00000;
 			FlagW = 2'b00;
 		end
 
