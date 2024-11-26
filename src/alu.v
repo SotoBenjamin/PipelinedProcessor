@@ -13,16 +13,16 @@ wire [31:0] condinvb_log;
 wire [32:0] sum;
 assign condinva = ALUControl[3] ? ~a : a;//For RSB
 assign condinvb = ALUControl[0] ? ~b : b;
-assign condinvb_log = (ALUControl[4] ? ~b : b) + ALUControl[4];
+assign condinvb_log = (ALUControl[4] ? ~b : b);
 
 
 assign sum = condinva + condinvb + (ALUControl[0] | ALUControl[3]);
 always @(*) begin
     casex (ALUControl[2:0])
         3'b00?: Result = sum;
-        3'b010: Result = a & b;
+        3'b010: Result = a & condinvb_log;
         3'b011: Result = a | b;
-        3'b110: Result = a ^ condinvb_log;
+        3'b110: Result = a ^ b;
     endcase
 end
 assign neg = Result[31];
