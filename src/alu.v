@@ -1,14 +1,15 @@
 module alu(
     input [31:0] a,b,
-    input [2:0] ALUControl,
+    input [3:0] ALUControl,
     output reg [31:0] Result,
     output wire [3:0] ALUFlags
 );
 wire neg,zero,carry,overflow;
 wire [31:0] condinvb;
 wire [32:0] sum;
+assign condinva = ALUControl[3] ? ~a : a;//For RSB
 assign condinvb = ALUControl[0] ? ~b : b;
-assign sum = a + condinvb + ALUControl[0];
+assign sum = condinva + condinvb + (ALUControl[0] | ALUControl[3]);
 always @(*) begin
     casex (ALUControl[2:0])
         3'b00?: Result = sum;

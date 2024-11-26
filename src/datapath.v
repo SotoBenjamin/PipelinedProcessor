@@ -38,7 +38,7 @@ module datapath (
 	input wire RegWriteW;
 	input wire [1:0] ImmSrcD;
 	input wire ALUSrcE;
-	input wire [2:0] ALUControlE;
+	input wire [3:0] ALUControlE;
 	input wire MemtoRegW;
 	input wire PCSrcW;
 	input wire [31:0] ReadDataM;
