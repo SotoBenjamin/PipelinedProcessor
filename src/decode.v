@@ -12,7 +12,8 @@ module decode (
 	RegSrc,
 	Branch,
 	ALUControl,
-	NoWrite
+	NoWrite,
+	IgRn
 );
 	input wire [1:0] Op;
 	input wire [5:0] Funct;
@@ -31,6 +32,7 @@ module decode (
 	output wire Branch;
 	//Add NoWrite for register
 	output reg NoWrite;
+	output reg IgRn;
 	reg [9:0] controls;
 	//Refactor Branch to Branch_
 	wire Branch_;
@@ -67,6 +69,8 @@ module decode (
 				4'b1011: ALUControl = 3'b000;//CMN
 				
 				4'b1100: ALUControl = 3'b011;//ORR
+
+				4'b1101 : ALUControl = 3'b000; //ADD;
 				
 				default: ALUControl = 3'bxxx;
 			endcase
@@ -78,26 +82,59 @@ module decode (
 			FlagW = 2'b00;
 		end
 
-	//Add cases for NoWrite wire
+	//Add cases for NoWrite and IgRn wire
 	always @(*)
 		if (ALUOp) begin
 			case (Funct[4:1])
-				4'b0100: NoWrite = 1'b0;//ADD
-				4'b0010: NoWrite = 1'b0;//SUB
-				4'b0000: NoWrite = 1'b0;//AND
-				4'b1100: NoWrite = 1'b0;//ORR
-				4'b0001: NoWrite = 1'b0;//EOR
-
-				4'b1000: NoWrite = 1'b1;//TST
-				4'b1010: NoWrite = 1'b1;//CMP
-				4'b1011: NoWrite = 1'b1;//CMN
-				4'b1001: NoWrite = 1'b1;//TEQ
-
-				default: NoWrite = 1'bx;
+				4'b0100: begin
+					NoWrite = 1'b0;//ADD
+					IgRn = 0;	
+				end 	
+				4'b0010: begin
+					NoWrite = 1'b0;//SUB
+					IgRn = 0;
+				end
+				4'b0000: begin 
+					NoWrite = 1'b0;//AND
+					IgRn = 0;
+				end	
+				4'b1100: begin 
+					NoWrite = 1'b0;//ORR
+					IgRn = 0;
+				end	
+				4'b0001: begin 
+					NoWrite = 1'b0;//EOR
+					IgRn = 0;
+				end					
+				4'b1000: begin 
+					NoWrite = 1'b1;//TST
+					IgRn = 0;
+				end	
+				4'b1010: begin 
+					NoWrite = 1'b1;//CMP
+					IgRn = 0;
+				end		
+				4'b1011: begin 
+					NoWrite = 1'b1;//CMN
+					IgRn = 0;
+				end
+				4'b1001: begin 
+					NoWrite = 1'b1;//TEQ
+					IgRn = 0;
+				end	
+				4'b1101: begin
+					NoWrite = 1'b0; //MOV
+					IgRn = 1;
+				end
+				default: begin 
+					NoWrite = 1'bx;
+					IgRn = 0;
+				end
 			endcase
 		end
 		else begin
 			NoWrite = 1'b0;
+			IgRn = 0;
 		end
 		
 	assign PCS = ((Rd == 4'b1111) & RegW) | Branch_;

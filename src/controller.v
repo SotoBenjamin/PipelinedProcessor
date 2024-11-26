@@ -19,6 +19,7 @@ module controller(
     PCSrcD,
     PCSrcE,
     PCSrcM,
+    IgRnE
     
 );
 	//controller vota de output ImmSrcD,RegSrcD , ALUControlE,ALUSrcE, MemWriteM,MemtoRegW,RegWriteW,PCSrcW
@@ -44,9 +45,10 @@ module controller(
     output wire PCSrcD;
     output wire PCSrcE;
     output wire PCSrcM;
+    output wire IgRnE;
 
 
-    wire  RegWriteD, MemtoRegD, MemWriteD, BranchD, ALUSrcD, NoWriteD;
+    wire  RegWriteD, MemtoRegD, MemWriteD, BranchD, ALUSrcD, NoWriteD, IgRnD;
     wire [1:0] FlagWriteD;
     wire [2:0] ALUControlD;
     wire [3:0] Flags, CondE, FlagsE;
@@ -70,7 +72,8 @@ module controller(
         .FlagWriteD(FlagWriteD),
         .ImmSrcD(ImmSrcD),
         .RegSrcD(RegSrcD),
-        .NoWriteD(NoWriteD)
+        .NoWriteD(NoWriteD),
+        .IgRnD(IgRnD)
     );
 
     //fase de execute
@@ -104,14 +107,14 @@ module controller(
         .CondE(CondE),
         .FlagsE(FlagsE)
     );
-    6 + 2 + 3 +4 +4 + 1 = 19
+   
 */
-    floprc #(20) de(
+    floprc #(21) de(
         .clk(clk),
         .reset(reset),
         .clr(FlushE),
-        .d({PCSrcD,RegWriteD,MemtoRegD,MemWriteD,ALUControlD,BranchD,ALUSrcD,FlagWriteD,NoWriteD,Cond,Flags}),
-        .q({PCSrcE,RegWriteE,MemtoRegE,MemWriteE,ALUControlE,BranchE,ALUSrcE,FlagWriteE,NoWriteE,CondE,FlagsE})
+        .d({PCSrcD,RegWriteD,MemtoRegD,MemWriteD,ALUControlD,BranchD,ALUSrcD,FlagWriteD,NoWriteD,Cond,Flags,IgRnD}),
+        .q({PCSrcE,RegWriteE,MemtoRegE,MemWriteE,ALUControlE,BranchE,ALUSrcE,FlagWriteE,NoWriteE,CondE,FlagsE,IgRnE})
     );
 
     //conditional

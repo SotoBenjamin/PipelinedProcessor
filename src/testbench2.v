@@ -29,7 +29,7 @@ module testbench2;
 	end
 	always @(negedge clk)
 		if (MemWrite == 0)
-			if ((DataAdr === 18)) begin
+			if ((DataAdr == 5)) begin
 				$display("Simulation succeeded");
 				$stop;
 			end

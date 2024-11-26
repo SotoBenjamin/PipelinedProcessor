@@ -27,6 +27,7 @@ module datapath (
 	FlushE,
 	FlushD,
 	BranchTakenE,
+	IgRnE
 );
 	//datapath recive  ImmSrcD,RegSrcD , ALUControlE,ALUSrcE, MemWriteM,MemtoRegW,RegWriteW,PCSrcW
 	//cambiar ALUResult por ALUOutM
@@ -49,6 +50,7 @@ module datapath (
 	input wire FlushE;
 	input wire FlushD;
 	input wire BranchTakenE;
+	input wire IgRnE;
 
 	output wire [3:0] ALUFlags;
 	output wire [31:0] PCF;
@@ -195,15 +197,22 @@ flopen_de regDE(
 		.q({RA1E,RA2E,RD1E,RD2E,WA3E,ExtImmE})
 	);
 	
+	wire [31:0] SrcAEp;
 // execute stage
-	mux3 #(32) srcamux(
+	mux3 #(32) srcaPmux(
 		.d0(RD1E),
 		.d1(ResultW),
 		.d2(ALUOutM),
 		.s(ForwardAE),
-		.y(SrcAE)
+		.y(SrcAEp)
 	);
 
+	mux2 #(32) srcamux(
+		.d0(SrcAEp),
+		.d1(32'b0),
+		.s(IgRnE),
+		.y(SrcAE)
+	);
 
 	mux3 #(32) writedatamux(
 		.d0(RD2E),

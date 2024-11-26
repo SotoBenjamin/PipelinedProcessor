@@ -38,6 +38,7 @@ module arm (
 	wire [1:0] ForwardBE;
 	wire StallF,StallD,FlushE,FlushD;
 	wire PCSrcD , PCSrcE , PCSrcM , BranchTakenE;
+	wire IgRnE; //selector Ignorar Rn
 	//controller vota de output ImmSrcD,RegSrcD , ALUControlE,ALUSrcE, MemWriteM,MemtoRegW,RegWriteW,PCSrcW
 	controller c(
 		.clk(clk),
@@ -59,7 +60,8 @@ module arm (
 		.BranchTakenE(BranchTakenE),
 		.PCSrcM(PCSrcM),
 		.PCSrcE(PCSrcE),
-		.PCSrcD(PCSrcD)
+		.PCSrcD(PCSrcD),
+		.IgRnE(IgRnE)
 	);
 
 
@@ -91,7 +93,8 @@ module arm (
 		.BranchTakenE(BranchTakenE),
 		.StallD(StallD),
 		.StallF(StallF),
-		.FlushD(FlushD)	
+		.FlushD(FlushD),
+		.IgRnE(IgRnE)
 	);
 
 	hazard hz(
