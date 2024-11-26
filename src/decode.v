@@ -65,7 +65,7 @@ module decode (
 				4'b0000: ALUControl = 5'b00010;//AND
 				4'b0001: ALUControl = 5'b00110;//EOR
 				4'b0010: ALUControl = 5'b00001;//SUB
-				4'b0011: ALUControl = 5'b01001;//RSB
+				4'b0011: ALUControl = 5'b01000;//RSB
 				
 				4'b0100: ALUControl = 5'b00000;//ADD
 				
@@ -76,7 +76,7 @@ module decode (
 				
 				4'b1100: ALUControl = 5'b00011;//ORR
 				
-				4'b1110: ALUControl = 5'b10011;//BIC
+				4'b1110: ALUControl = 5'b10010;//BIC
 				
 				4'b1101: ALUControl = 5'b00000;//MOV;
 				
