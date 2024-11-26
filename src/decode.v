@@ -55,9 +55,11 @@ module decode (
 		endcase
 	assign {RegSrc, ImmSrc, ALUSrc, MemtoReg, RegW, MemW, Branch_, ALUOp} = controls;
 
+	//ALUControl[0] => srcB positivo o negativo (arit)
+	//ALUControl[1] => == 0 -> arit | == 1 -> log
 	//ALUControl[2] => EOR
-	//ALUControl[3] => RSB
-	//ALUControl[4] => BIC
+	//ALUControl[3] => RSB | srcA positivo o negativo (arit)
+	//ALUControl[4] => BIC | srcB positivo o negativo (log)
 	
 	always @(*)
 		if (ALUOp) begin
@@ -68,6 +70,10 @@ module decode (
 				4'b0011: ALUControl = 5'b01000;//RSB
 				
 				4'b0100: ALUControl = 5'b00000;//ADD
+
+				4'b0101: ALUControl = 5'b00100;//ADC
+				4'b0110: ALUControl = 5'b00101;//SBC
+				4'b0111: ALUControl = 5'b01100;//RSC
 				
 				4'b1000: ALUControl = 5'b00010;//TST
 				4'b1001: ALUControl = 5'b00110;//TEQ
@@ -100,6 +106,10 @@ module decode (
 				4'b0011: NoWrite = 1'b0;//RSB
 				
 				4'b0100: NoWrite = 1'b0;//ADD
+
+				4'b0101: NoWrite = 1'b0;//ADC
+				4'b0110: NoWrite = 1'b0;//SBC
+				4'b0111: NoWrite = 1'b0;//RSC
 				
 				4'b1000: NoWrite = 1'b1;//TST
 				4'b1001: NoWrite = 1'b1;//TEQ

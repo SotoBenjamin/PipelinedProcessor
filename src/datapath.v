@@ -27,7 +27,8 @@ module datapath (
 	FlushE,
 	FlushD,
 	BranchTakenE,
-	IgRnE
+	IgRnE,
+	FlagCarryE
 );
 	//datapath recive  ImmSrcD,RegSrcD , ALUControlE,ALUSrcE, MemWriteM,MemtoRegW,RegWriteW,PCSrcW
 	//cambiar ALUResult por ALUOutM
@@ -51,6 +52,7 @@ module datapath (
 	input wire FlushD;
 	input wire BranchTakenE;
 	input wire IgRnE;
+	input wire FlagCarryE; //
 
 	output wire [3:0] ALUFlags;
 	output wire [31:0] PCF;
@@ -229,12 +231,14 @@ flopen_de regDE(
 		.s(ALUSrcE),
 		.y(SrcBE)
 	);
+	
 	alu alu(
-		SrcAE,
-		SrcBE,
-		ALUControlE,
-		ALUResultE,
-		ALUFlags
+		.a(SrcAE),
+		.b(SrcBE),
+		.ALUControl(ALUControlE),
+		.carryE(FlagCarryE),
+		.Result(ALUResultE),
+		.ALUFlags(ALUFlags)
 	);
 
 /*
