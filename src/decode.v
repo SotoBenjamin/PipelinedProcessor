@@ -32,7 +32,7 @@ module decode (
 	output wire Branch;
 	//Add NoWrite for register
 	output reg NoWrite;
-	output reg IgRn;
+	output wire IgRn;
 	reg [9:0] controls;
 	//Refactor Branch to Branch_
 	wire Branch_;
@@ -76,9 +76,9 @@ module decode (
 				
 				4'b1100: ALUControl = 5'b00011;//ORR
 				
-				4'b1110: ALUControl = 5'b10010;//BIC
+				4'b1110: ALUControl = 5'b10011;//BIC
 				
-				4'b1101 : ALUControl = 5'b00000; //ADD;
+				4'b1101: ALUControl = 5'b00000;//MOV;
 				
 				default: ALUControl = 5'bxxxxx;
 			endcase
@@ -91,60 +91,33 @@ module decode (
 		end
 
 	//Add cases for NoWrite and IgRn wire
-	always @(*)
+		always @(*)
 		if (ALUOp) begin
 			case (Funct[4:1])
-				4'b0100: begin
-					NoWrite = 1'b0;//ADD
-					IgRn = 0;	
-				end 	
-				4'b0010: begin
-					NoWrite = 1'b0;//SUB
-					IgRn = 0;
-				end
-				4'b0000: begin 
-					NoWrite = 1'b0;//AND
-					IgRn = 0;
-				end	
-				4'b1100: begin 
-					NoWrite = 1'b0;//ORR
-					IgRn = 0;
-				end	
-				4'b0001: begin 
-					NoWrite = 1'b0;//EOR
-					IgRn = 0;
-				end					
-				4'b1000: begin 
-					NoWrite = 1'b1;//TST
-					IgRn = 0;
-				end	
-				4'b1010: begin 
-					NoWrite = 1'b1;//CMP
-					IgRn = 0;
-				end		
-				4'b1011: begin 
-					NoWrite = 1'b1;//CMN
-					IgRn = 0;
-				end
-				4'b1001: begin 
-					NoWrite = 1'b1;//TEQ
-					IgRn = 0;
-				end	
-				4'b1101: begin
-					NoWrite = 1'b0; //MOV
-					IgRn = 1;
-				end
-				default: begin 
-					NoWrite = 1'bx;
-					IgRn = 0;
-				end
+				4'b0000: NoWrite = 1'b0;//AND
+				4'b0001: NoWrite = 1'b0;//EOR
+				4'b0010: NoWrite = 1'b0;//SUB
+				4'b0011: NoWrite = 1'b0;//RSB
+				
+				4'b0100: NoWrite = 1'b0;//ADD
+				
+				4'b1000: NoWrite = 1'b1;//TST
+				4'b1001: NoWrite = 1'b1;//TEQ
+				4'b1010: NoWrite = 1'b1;//CMP
+				4'b1011: NoWrite = 1'b1;//CMN
+				
+				4'b1100: NoWrite = 1'b0;//ORR
+				
+				4'b1110: NoWrite = 1'b0;//BIC
+				
+				4'b1101: NoWrite = 1'b0;//MOV;
+				default: NoWrite = 1'bx;
 			endcase
 		end
 		else begin
 			NoWrite = 1'b0;
-			IgRn = 0;
 		end
-		
+	assign IgRn = ALUOp & (Funct[4:1] == 4'b1101); //MOV
 	assign PCS = ((Rd == 4'b1111) & RegW) | Branch_;
 	assign Branch = Branch_;
 endmodule
