@@ -12,7 +12,7 @@ wire [31:0] condinvb_log;
 
 wire [32:0] sum;
 assign condinva = ALUControl[3] ? ~a : a;//For RSB
-assign condinvb = ALUControl[0] ? ~b : b;
+assign condinvb = ALUControl[0] ? ~b : b; 
 assign condinvb_log = (ALUControl[4] ? ~b : b);
 
 
