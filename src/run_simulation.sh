@@ -4,12 +4,11 @@ rm -f simulation.out simulation.vcd
 
 iverilog -o simulation.out \
   top.v \
-  testbench2.v \
+  testbench.v \
   arm.v \
   controller.v \
   datapath.v \
   decode.v \
-  condlogic.v \
   condcheck.v \
   control_unit.v \
   extend.v \
@@ -22,12 +21,6 @@ iverilog -o simulation.out \
   mux3.v \
   flopenr.v \
   flopr.v \
-  flopen_de.v \
-  flopen_em.v \
-  flopen_mw.v \
-  flopencont_de.v \
-  flopencont_em.v \
-  flopencont_mw.v \
   hazard.v \
   cond_unit.v \
   flopenrc.v \

@@ -132,12 +132,12 @@ module datapath (
 	assign PCPlus8 = PCPlus4F;
 	
 	flopenrc #(32) instreg (
-	    .clk(clk),
-	    .reset(reset),
+		.clk(clk),
+		.reset(reset),
 		.clear(FlushD),
 		.en(~StallD),
-	    .d(InstrF),
-	    .q(InstrD)
+		.d(InstrF),
+		.q(InstrD)
 	);
 
 //decode stage
