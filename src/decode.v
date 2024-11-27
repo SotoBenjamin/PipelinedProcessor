@@ -31,18 +31,24 @@ module decode (
 	output wire Branch;
 	output reg NoWrite; // DP no write
 	output wire IgRn;
+	//output wire Pre;
 	wire Branch_;
 	wire ALUOp;
 	
-	assign Branch_ = (Op == 2'b10);
-	assign MemtoReg = (Op == 2'b01) & (Funct[0] == 1'b1);
-	assign MemW = (Op == 2'b01) & (Funct[0] == 1'b0);
-	assign ALUSrc = (Op == 2'b00) ? Funct[5] : ((Op == 2'b01) ? ~Funct[5] : 1'b1);
+	wire isDP = (Op == 2'b00);
+	wire isMem = (Op == 2'b01);
+	wire isBr = (Op == 2'b10);
+	
+	assign Branch_ = isBr;
+	assign MemtoReg = isMem & (Funct[0] == 1'b1);
+	assign MemW = isMem & (Funct[0] == 1'b0);
+	assign ALUSrc = isDP ? Funct[5] : (isMem ? ~Funct[5] : 1'b1);
 	assign ImmSrc = Op;
-	assign RegW = (Op == 2'b00) | ((Op == 2'b01) & Funct[0]);
-	assign RegSrc[0] = (Op == 2'b10);
-	assign RegSrc[1] = ((Op == 2'b01) & ~Funct[0]);
-	assign ALUOp = (Op == 2'b00) | ((Op == 2'b01) & ~Funct[3]);
+	assign RegW = isDP | (isMem & Funct[0]);
+	assign RegSrc[0] = isBr;
+	assign RegSrc[1] = (isMem & ~Funct[0]);
+	assign ALUOp = isDP | (isMem & ~Funct[3]);
+	//assign Pre = ~(isMem & (~Funct[4] & ~Funct[1]));
 
 
 	//ALUControl[2] => EOR
