@@ -19,8 +19,8 @@ module controller(
     PCSrcD,
     PCSrcE,
     PCSrcM,
-    IgRnE
-    
+    IgRnE,
+    FlagCarryE
 );
 	//controller vota de output ImmSrcD,RegSrcD , ALUControlE,ALUSrcE, MemWriteM,MemtoRegW,RegWriteW,PCSrcW
 
@@ -46,7 +46,7 @@ module controller(
     output wire PCSrcE;
     output wire PCSrcM;
     output wire IgRnE;
-
+    output wire FlagCarryE;
 
     wire  RegWriteD, MemtoRegD, MemWriteD, BranchD, ALUSrcD, NoWriteD, IgRnD;
     wire [1:0] FlagWriteD;
@@ -135,7 +135,7 @@ module controller(
     assign PCSrcEcond =  (PCSrcE & CondExE);
     assign MemWriteEcond = MemWriteE & CondExE;
     assign BranchTakenE = (BranchE & CondExE) ;
-
+    assign FlagCarryE = FlagsE[1]; 
 /*
 
  flopencont_em em(
