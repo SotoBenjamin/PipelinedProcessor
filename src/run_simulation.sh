@@ -4,7 +4,7 @@ rm -f simulation.out simulation.vcd
 
 iverilog -o simulation.out \
   top.v \
-  testbench2.v \
+  testbench.v \
   arm.v \
   controller.v \
   datapath.v \

@@ -28,21 +28,18 @@ module decode (
 	output wire [1:0] ImmSrc;
 	output wire [1:0] RegSrc;
 	output reg [4:0] ALUControl;
-	//Add Branch output
 	output wire Branch;
-	//Add NoWrite for register
-	output reg NoWrite;
+	output reg NoWrite; // DP no write
 	output wire IgRn;
-	//Refactor Branch to Branch_
 	wire Branch_;
 	wire ALUOp;
 	
 	assign Branch_ = (Op == 2'b10);
 	assign MemtoReg = (Op == 2'b01) & (Funct[0] == 1'b1);
 	assign MemW = (Op == 2'b01) & (Funct[0] == 1'b0);
-	assign ALUSrc = (Op == 2'b00) ? (Funct[5] : (Op == 2'b01) ? (~Funct[5] : 1'b1));
+	assign ALUSrc = (Op == 2'b00) ? Funct[5] : ((Op == 2'b01) ? ~Funct[5] : 1'b1);
 	assign ImmSrc = Op;
-	assign RegW = (Op == 2'b00) | ((Op == 2'b01) & ~Funct[0]);
+	assign RegW = (Op == 2'b00) | ((Op == 2'b01) & Funct[0]);
 	assign RegSrc[0] = (Op == 2'b10);
 	assign RegSrc[1] = ((Op == 2'b01) & ~Funct[0]);
 	assign ALUOp = (Op == 2'b00) | ((Op == 2'b01) & ~Funct[3]);
