@@ -45,6 +45,8 @@ module decode (
 	assign ALUOp = (Op == 2'b00) | ((Op == 2'b01) & ~Funct[3]);
 
 
+	//ALUControl[0] => srcB positivo o negativo (arit)
+	//ALUControl[1] => == 0 -> arit | == 1 -> log
 	//ALUControl[2] => EOR
 	//ALUControl[3] => RSB
 	//ALUControl[4] => BIC
@@ -95,6 +97,10 @@ module decode (
 				4'b0011: NoWrite = 1'b0;//RSB
 				
 				4'b0100: NoWrite = 1'b0;//ADD
+
+				4'b0101: NoWrite = 1'b0;//ADC
+				4'b0110: NoWrite = 1'b0;//SBC
+				4'b0111: NoWrite = 1'b0;//RSC
 				
 				4'b1000: NoWrite = 1'b1;//TST
 				4'b1001: NoWrite = 1'b1;//TEQ
