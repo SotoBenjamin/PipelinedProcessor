@@ -89,6 +89,7 @@ module datapath (
 	wire [3:0] RA2E;
 	wire [31:0] ReadDataW;
 	wire [31:0] ALUOutW;
+	wire [31:0] InstrE;
 
 
 //fetch stage
@@ -192,11 +193,11 @@ flopen_de regDE(
 
 	32*3 + 12 = 108
 */	
-	flopr #(108) de(
+	flopr #(140) de(
 		.clk(clk),
 		.reset(reset),
-		.d({RA1D,RA2D,RD1D,RD2D,InstrD[15:12],ExtImmD}),
-		.q({RA1E,RA2E,RD1E,RD2E,WA3E,ExtImmE})
+		.d({RA1D,RA2D,RD1D,RD2D,InstrD[15:12],ExtImmD,InstrD}),
+		.q({RA1E,RA2E,RD1E,RD2E,WA3E,ExtImmE,InstrE})
 	);
 	
 	wire [31:0] SrcAEp;
@@ -215,15 +216,23 @@ flopen_de regDE(
 		.s(IgRnE),
 		.y(SrcAE)
 	);
+	wire [31:0] WriteDataEp;
 
 	mux3 #(32) writedatamux(
 		.d0(RD2E),
 		.d1(ResultW),
 		.d2(ALUOutM),
 		.s(ForwardBE),
-		.y(WriteDataE)
+		.y(WriteDataEp)
 	);
 
+
+	shift sh(
+		.ShiftD(InstrE[11:5]),
+		.WD(WriteDataEp),
+		.en(1'b0),
+		.WriteData(WriteDataE)
+	);
 
 	mux2 #(32) srcbmux(
 		.d0(WriteDataE),

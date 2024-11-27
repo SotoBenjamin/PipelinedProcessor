@@ -31,7 +31,8 @@ iverilog -o simulation.out \
   hazard.v \
   cond_unit.v \
   flopenrc.v \
-  floprc.v
+  floprc.v \
+  shift.v
 
 if [ $? -ne 0 ]; then
   echo "Error en la compilación."
